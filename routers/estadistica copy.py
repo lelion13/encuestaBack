@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 import sqlite3
+from collections import defaultdict
 
 router = APIRouter()
 
@@ -14,15 +15,15 @@ async def obtener_estadisticas():
 
     # Cantidad por valor (carita)
     cursor.execute("SELECT valor, COUNT(*) FROM encuestas GROUP BY valor")
-    por_valor = [{"valor": row[0], "cantidad": row[1]} for row in cursor.fetchall()]
+    por_valor = {row[0]: row[1] for row in cursor.fetchall()}
 
     # Cantidad por equipo
     cursor.execute("SELECT equipo, COUNT(*) FROM encuestas GROUP BY equipo")
-    por_equipo = [{"equipo": row[0], "cantidad": row[1]} for row in cursor.fetchall()]
+    por_equipo = {row[0]: row[1] for row in cursor.fetchall()}
 
     # Cantidad por día
     cursor.execute("SELECT substr(fecha_hora, 1, 10) as dia, COUNT(*) FROM encuestas GROUP BY dia")
-    por_dia = [{"fecha": row[0], "cantidad": row[1]} for row in cursor.fetchall()]
+    por_dia = {row[0]: row[1] for row in cursor.fetchall()}
 
     conn.close()
 
